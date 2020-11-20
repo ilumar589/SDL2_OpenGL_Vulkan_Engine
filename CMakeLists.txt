@@ -11,6 +11,8 @@ file(COPY ${CMAKE_SOURCE_DIR}/dependencies/SDL2 DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/dependencies/SDL2/msvc/libraries/x64/SDL2.dll DESTINATION ${CMAKE_BINARY_DIR})
 # copy glad dependencies
 file(COPY ${CMAKE_SOURCE_DIR}/dependencies/glad DESTINATION ${CMAKE_BINARY_DIR})
+# copy stb dependencies
+file(COPY ${CMAKE_SOURCE_DIR}/dependencies/stb DESTINATION ${CMAKE_BINARY_DIR})
 # copy resources
 file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 
@@ -31,9 +33,11 @@ find_package(OpenGL REQUIRED)
 set(SOURCE_FILES
         src/glad.c
         src/main.cpp
-        src/examples/ExampleGame.cpp src/examples/ExampleGame.h src/Shader.cpp src/Shader.h)
+        src/examples/ExampleGame.cpp
+        src/Shader.cpp src/examples/Examples.cpp)
 
 include_directories(dependencies/glad/include)
+include_directories(dependencies/stb)
 include_directories(src)
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
