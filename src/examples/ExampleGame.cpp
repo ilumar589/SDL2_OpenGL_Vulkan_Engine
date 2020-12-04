@@ -3,27 +3,29 @@
 //
 
 #include "ExampleGame.h"
-#include "Examples.h"
-#include <glad/glad.h>
 #include <iostream>
-#include <Shader.h>
+#include <memory>
 
-bool ExampleGame::init() {
+
+GameContext * GameContext_create() {
+    auto *game_context = static_cast<GameContext*>(calloc(1, sizeof(GameContext)));
+
     if (SDL_Init( SDL_INIT_VIDEO ) < 0) {
         std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError()
                   << std::endl;
-
-        return false;
     }
 
-    window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+    game_context->window = SDL_CreateWindow("SDL Tutorial",
+                                            SDL_WINDOWPOS_UNDEFINED,
+                                            SDL_WINDOWPOS_UNDEFINED,
+                                            800,
+                                            600,
+                                            SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
-    if (!window) {
+    if (!game_context->window) {
         std::cout << "Window could not be created! SDL_Error "
                   << SDL_GetError()
                   << std::endl;
-
-        return false;
     }
 
     // Use OpenGL 3.3 core
@@ -31,80 +33,63 @@ bool ExampleGame::init() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    glContext = SDL_GL_CreateContext(window);
+    game_context->gl_context = SDL_GL_CreateContext(game_context->window);
 
-    if (!glContext) {
+    if (!game_context->gl_context) {
         std::cout << "OpenGL context could not be created! SDL Error: "
                   << SDL_GetError()
                   << std::endl;
-        return false;
     }
 
-    SDL_GL_MakeCurrent(window, glContext);
+    SDL_GL_MakeCurrent(game_context->window, game_context->gl_context);
 
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
     if (SDL_GL_SetSwapInterval(1) < 0) {
-        vSyncAvailable = false;
+        game_context->v_sync_available = false;
         std::cout << "Warning: Unable to set Vsync! SDL Error: "
                   << SDL_GetError()
                   << std::endl;
     }
 
-    return true;
+
+    return game_context;
 }
 
-bool ExampleGame::initGLData() {
-
-    Shader shader{"resources/shaders/vertex.glsl", "resources/shaders/fragment.glsl"};
-
-    shader.use();
-
-    auto vaoTexturePair = std::make_unique<std::tuple<GLuint, GLuint>>(Examples::loadTexture().value());
-
-    auto vaoTexturePairGet = std::get<0>(vaoTexturePair.get());
-
-    vao = vaoTexturePairGet(0);
-
-    return true;
+void GameContext_destroy(GameContext *game_context) {
+    SDL_DestroyWindow(game_context->window);
+    free(game_context);
+    SDL_Quit();
 }
 
-void ExampleGame::handleInput() {
-    while (SDL_PollEvent(&event)) {
+void GameContext_handle_input(GameContext *game_context) {
+    while (SDL_PollEvent(&game_context->event)) {
         //User requests quit
-        if( event.type == SDL_QUIT ){
-            quit = true;
+        if( game_context->event.type == SDL_QUIT ){
+            game_context->quit = true;
         }
     }
 }
 
-void ExampleGame::update() {
-    while (!quit) {
-        handleInput();
-        render();
+void GameContext_update(GameContext *game_context) {
+    while (!game_context->quit) {
+        GameContext_handle_input(game_context);
+        GameContext_render(game_context);
     }
-
-    close();
+    GameContext_destroy(game_context);
 }
 
-void ExampleGame::render() {
+void GameContext_render(GameContext *game_context) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
     // render the triangle
-    glBindVertexArray(vao);
+    glBindVertexArray(game_context->vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // PRESENT BACKBUFFER:
-    SDL_GL_SwapWindow(window);
+    SDL_GL_SwapWindow(game_context->window);
 }
-
-void ExampleGame::close() {
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-}
-
-ExampleGame::ExampleGame() = default;

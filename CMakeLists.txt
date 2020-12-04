@@ -34,13 +34,16 @@ set(SOURCE_FILES
         src/glad.c
         src/main.cpp
         src/examples/ExampleGame.cpp
-        src/Shader.cpp src/examples/Examples.cpp)
+        src/Shader.cpp
+        src/examples/Examples.cpp)
 
+include_directories(dependencies/SDL2/msvc/include)
 include_directories(dependencies/glad/include)
 include_directories(dependencies/stb)
 include_directories(src)
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
+
 target_link_libraries(${CMAKE_PROJECT_NAME} OpenGL::GL)
 target_link_libraries(${CMAKE_PROJECT_NAME} SDL2::Main)
 #target_link_libraries(${CMAKE_PROJECT_NAME} SDL2::Main SDL2::Net SDL2::Mixer SDL2::Image SDL2::TTF SDL2::GFX) all the SDL2 dependencies are linked here as an example

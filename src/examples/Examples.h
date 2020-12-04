@@ -5,6 +5,8 @@
 #ifndef SDL2_OPENGL_VULKAN_ENGINE_EXAMPLES_H
 #define SDL2_OPENGL_VULKAN_ENGINE_EXAMPLES_H
 
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <glad/glad.h>
 #include <tuple>
 #include <optional>
