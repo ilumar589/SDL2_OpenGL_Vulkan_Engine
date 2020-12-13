@@ -7,6 +7,7 @@
 
 #include <glad/glad.h>
 #include<SDL.h>
+#include <Shader.h>
 
 
 struct GameContext {
@@ -15,7 +16,9 @@ struct GameContext {
     SDL_Event  event{};
     bool quit = false;
     bool v_sync_available = true;
-    unsigned int vao{};
+    GLuint vao{};
+    GLuint textureHandle{};
+    Shader shader;
 };
 
 GameContext* GameContext_create();

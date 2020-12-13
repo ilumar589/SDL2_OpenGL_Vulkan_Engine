@@ -23,9 +23,7 @@ GameContext * GameContext_create() {
                                             SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
     if (!game_context->window) {
-        std::cout << "Window could not be created! SDL_Error "
-                  << SDL_GetError()
-                  << std::endl;
+        printf("Window could not be created! SDL_Error %s", SDL_GetError());
     }
 
     // Use OpenGL 3.3 core
@@ -36,22 +34,18 @@ GameContext * GameContext_create() {
     game_context->gl_context = SDL_GL_CreateContext(game_context->window);
 
     if (!game_context->gl_context) {
-        std::cout << "OpenGL context could not be created! SDL Error: "
-                  << SDL_GetError()
-                  << std::endl;
+        SDL_SetError("OpenGL context could not be created! SDL Error: %s", SDL_GetError());
     }
 
     SDL_GL_MakeCurrent(game_context->window, game_context->gl_context);
 
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        printf("OpenGL context could not be created! SDL Error: %s", SDL_GetError());
     }
 
     if (SDL_GL_SetSwapInterval(1) < 0) {
         game_context->v_sync_available = false;
-        std::cout << "Warning: Unable to set Vsync! SDL Error: "
-                  << SDL_GetError()
-                  << std::endl;
+        printf("Warning: Unable to set Vsync! SDL Error: %s", SDL_GetError());
     }
 
 
@@ -86,9 +80,10 @@ void GameContext_render(GameContext *game_context) {
     glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
-    // render the triangle
+    glBindTexture(GL_TEXTURE_2D, game_context->textureHandle);
+    game_context->shader.use();
     glBindVertexArray(game_context->vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     // PRESENT BACKBUFFER:
     SDL_GL_SwapWindow(game_context->window);

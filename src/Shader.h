@@ -16,10 +16,10 @@ private:
     GLuint programId;
 
 public:
-    Shader(const Shader& other) = delete; // copy not allowed through the copy constructor
-    Shader(Shader&& other) = delete; // move not allowed through the move constructor
-    Shader& operator=(const Shader& other) = delete; // copy not allowed through the copy operator
-    Shader& operator=(Shader && other) = delete; // move not allowed through the move operator
+//    Shader(const Shader& other) = delete; // copy not allowed through the copy constructor
+//    Shader(Shader&& other) = delete; // move not allowed through the move constructor
+//    Shader& operator=(const Shader& other) = delete; // copy not allowed through the copy operator
+//    Shader& operator=(Shader && other) = delete; // move not allowed through the move operator
 
     Shader(const char* vertexPath, const char* fragmentPath);
     void use() const noexcept;

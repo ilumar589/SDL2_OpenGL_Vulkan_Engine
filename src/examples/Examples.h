@@ -12,15 +12,21 @@
 #include <optional>
 
 namespace Examples {
+
+    struct GLuint2 {
+        GLuint value1;
+        GLuint value2;
+    };
+
     GLuint triangleVertexArrayBuffer();
     GLuint squareWithElementBufferObject();
     // Try to draw 2 triangles next to each other using glDrawArrays by adding more vertices to your data
     GLuint helloTriangleExercise1();
     // Same two triangles using separate vaos and vbos
-    std::tuple<GLuint, GLuint> helloTriangleExercise2();
+    GLuint2 helloTriangleExercise2();
     GLuint colorOnAttributes();
     // return the vertex array object handle and texture handle pair
-    std::optional<std::tuple<GLuint, GLuint>> loadTexture();
+    GLuint2 loadTexture();
 
 }
 
