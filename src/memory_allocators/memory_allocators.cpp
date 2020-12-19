@@ -65,7 +65,7 @@ void arena_free(Arena *arena, void *ptr) {
 }
 
 
-void *arena_resize_align(Arena *arena, void *old_memory, size_t old_size, size_t new_size, size_t align) {
+void *arena_resize_align(Arena *arena, void *old_memory, size_t old_size, size_t new_size, size_t align = DEFAULT_ALIGNMENT) {
     auto *old_mem = (unsigned char *)old_memory;
 
     assert(is_power_of_two(align));
@@ -99,6 +99,21 @@ void arena_free_all(Arena *arena) {
     arena->previous_offset = 0;
 }
 
+Temp_Arena_Memory temp_arena_memory_begin(Arena *arena) {
+    Temp_Arena_Memory temp{};
+    temp.arena = arena;
+    temp.previous_offset = arena->previous_offset;
+    temp.current_offset = arena->current_offset;
+
+    return temp;
+}
+
+void temp_arena_memory_end(Temp_Arena_Memory temp) {
+    temp.arena->previous_offset = temp.previous_offset;
+    temp.arena->current_offset = temp.current_offset;
+}
+
+
 void example_use_case() {
     unsigned char backing_buffer[256];
     Arena arena{};
@@ -112,8 +127,8 @@ void example_use_case() {
         // reset all arena offsets for each loop
         arena_free_all(&arena);
 
-        x = (int *) arena_alloc_align(&arena, sizeof(int));
-        f = (float *) arena_alloc_align(&arena, sizeof(float));
+        x = static_cast<int *>(arena_alloc_align(&arena, sizeof(int)));
+        f = static_cast<float *>(arena_alloc_align(&arena, sizeof(float)));
         str = static_cast<char *>(arena_alloc_align(&arena, 10));
 
         *x = 123;
@@ -124,7 +139,7 @@ void example_use_case() {
         printf("%p: %f\n", f, *f);
         printf("%p: %s\n", str, str);
 
-        str = arena_resize(&a, str, 10, 16);
+        str = static_cast<char *>(arena_resize_align(&arena, str, 10, 16));
         memmove(str+7, " world!", 8);
         printf("%p: %s\n", str, str);
     }
