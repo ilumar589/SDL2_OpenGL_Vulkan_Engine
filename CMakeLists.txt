@@ -36,7 +36,8 @@ set(SOURCE_FILES
         src/examples/ExampleGame.cpp
         src/Shader.cpp
         src/examples/Examples.cpp
-        src/memory_allocators/memory_allocators.cpp)
+        src/memory_allocators/memory_allocators.cpp
+        src/utils/pointer_math.h)
 
 include_directories(dependencies/SDL2/msvc/include)
 include_directories(dependencies/glad/include)
