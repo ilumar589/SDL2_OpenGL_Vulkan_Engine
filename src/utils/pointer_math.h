@@ -6,7 +6,7 @@
 #define SDL2_OPENGL_VULKAN_ENGINE_POINTER_MATH_H
 
 #include <cstdalign>
-#include "utils/types.h"
+#include <utils/types.h>
 
 using namespace EngineTypes;
 

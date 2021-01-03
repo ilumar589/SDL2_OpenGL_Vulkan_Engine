@@ -37,7 +37,9 @@ set(SOURCE_FILES
         src/Shader.cpp
         src/examples/Examples.cpp
         src/memory_allocators/memory_allocators.cpp
-        src/utils/pointer_math.h)
+        src/utils/pointer_math.h
+        src/memory_allocators/Allocator.cpp
+        src/memory_allocators/LinearAllocator.cpp)
 
 include_directories(dependencies/SDL2/msvc/include)
 include_directories(dependencies/glad/include)
